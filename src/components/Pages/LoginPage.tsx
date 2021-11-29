@@ -1,24 +1,59 @@
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Formik } from 'formik';
 
+import {
+  useSelector, selectIsAuth, useDispatch,
+  selectAuthError, selectAuthLoading,
+  actionLogout, actionAuthenticate,
+} from '@store';
 import logoImage from '@images/logo.svg';
 import mehImage from '@images/meh.svg';
 import LoginPageStyled from './LoginPageStyled';
+import formConstants from './formConstants';
 import { Input, Button } from '../Form';
 
 interface InitialValuesForm {
   login: string
-  additionalLogin: string
+  sublogin: string
   password: string
 }
 
 const LoginPage: FunctionComponent = () => {
-  const initialValues = {
+  const isAuth = useSelector(selectIsAuth);
+  const dispatch = useDispatch();
+  const history = useHistory();
+  const error = useSelector(selectAuthError);
+  const loading = useSelector(selectAuthLoading);
+  const initialValues: InitialValuesForm = {
     login: '',
-    additionalLogin: '',
+    sublogin: '',
     password: '',
   };
-  const er = false;
+
+  useEffect(() => {
+    if (isAuth) dispatch(actionLogout());
+  }, []);
+
+  useEffect(() => {
+    if (isAuth) history.push('/');
+  }, [isAuth]);
+
+  const validate = (values: InitialValuesForm) => {
+    const errors: { [name: string]: string } = {};
+
+    Object.keys(values).forEach((name) => {
+      if (!values[name as keyof typeof initialValues]) {
+        errors[name] = 'Required';
+      }
+    });
+
+    return errors;
+  };
+
+  const onSubmit = (values: InitialValuesForm) => {
+    dispatch(actionAuthenticate(values));
+  };
 
   return (
     <LoginPageStyled.Container>
@@ -26,26 +61,18 @@ const LoginPage: FunctionComponent = () => {
 
       <Formik<InitialValuesForm>
         initialValues={initialValues}
-        validate={(values: InitialValuesForm) => {
-          const errors: { [name: string]: string } = {};
-
-          Object.keys(values).forEach((name) => {
-            if (!values[name as keyof typeof initialValues]) {
-              errors[name] = 'Required';
-            }
-          });
-
-          return errors;
-        }}
-        onSubmit={(values) => console.log(values)}
+        validate={validate}
+        onSubmit={onSubmit}
       >
-        {({ values, errors, handleChange, handleSubmit, touched }) => (
+        {({
+          handleSubmit, errors, touched, values, handleChange,
+        }) => (
           <form onSubmit={handleSubmit}>
             <LoginPageStyled.Form>
 
               <LoginPageStyled.Title>API-консолька</LoginPageStyled.Title>
 
-              {er && (
+              {error && (
               <LoginPageStyled.Alert>
                 <LoginPageStyled.Smile
                   src={mehImage}
@@ -53,17 +80,18 @@ const LoginPage: FunctionComponent = () => {
                 />
                 <div>
                   <LoginPageStyled.ErrorTitle>
-                    Вход не вышел
+                    {formConstants.error_login}
                   </LoginPageStyled.ErrorTitle>
                   <LoginPageStyled.ErrorDescription>
-                    {'{id: "error/auth/failed", explain: "wrong_credentials"}'}
+                    {error}
                   </LoginPageStyled.ErrorDescription>
                 </div>
               </LoginPageStyled.Alert>
               )}
 
               <Input
-                title="Логин"
+                title={formConstants.input_title_login}
+                error={Boolean(errors.login && touched.login)}
                 inputProps={{
                   name: 'login',
                   value: values.login,
@@ -72,17 +100,19 @@ const LoginPage: FunctionComponent = () => {
               />
 
               <Input
-                title="Сублогин"
-                description="Опционально"
+                title={formConstants.input_title_sublogin}
+                description={formConstants.input_description_sublogin}
+                error={Boolean(errors.sublogin && touched.sublogin)}
                 inputProps={{
-                  name: 'additionalLogin',
-                  value: values.additionalLogin,
+                  name: 'sublogin',
+                  value: values.sublogin,
                   onChange: handleChange,
                 }}
               />
 
               <Input
-                title="Пароль"
+                title={formConstants.input_title_password}
+                error={Boolean(errors.password && touched.password)}
                 inputProps={{
                   type: 'password',
                   name: 'password',
@@ -91,14 +121,16 @@ const LoginPage: FunctionComponent = () => {
                 }}
               />
 
-              <Button type="submit">Войти</Button>
+              <Button loading={loading} type="submit">
+                {formConstants.login}
+              </Button>
             </LoginPageStyled.Form>
           </form>
         )}
       </Formik>
 
-      <LoginPageStyled.Link href="http://$">
-        @link-to-your-github
+      <LoginPageStyled.Link href={formConstants.github_link}>
+        {formConstants.github_text}
       </LoginPageStyled.Link>
     </LoginPageStyled.Container>
   );

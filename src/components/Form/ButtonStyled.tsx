@@ -1,17 +1,17 @@
 import styled from 'styled-components';
 
 interface Props {
-  loading?: true
+  loading?: number
 }
 
 const ButtonStyled = styled.button<Props>`
-  background: linear-gradient(180deg, #45A6FF 0%, #0055FB 100%), #C4C4C4;
-  border-radius: 5px;
-  height: 40px;
-  width: 110px;
-  color: white;
-  font-size: 16px;
   border: none;
+  border-radius: 5px;
+  width: 110px;
+  height: 40px;
+  background: linear-gradient(180deg, #45A6FF 0%, #0055FB 100%), #C4C4C4;
+  font-size: 16px;
+  color: white;
 
   :hover {
     background: linear-gradient(

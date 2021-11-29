@@ -19,6 +19,7 @@ const config = {
       '@store': resolve(__dirname, 'src/store'),
       '@styles': resolve(__dirname, 'src/styles'),
       '@images': resolve(__dirname, 'src/images'),
+      '@helpers': resolve(__dirname, 'src/helpers'),
     },
   },
   devServer: {

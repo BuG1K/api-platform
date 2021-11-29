@@ -1,3 +1,1 @@
-import authActions from './auth';
-
-export default authActions;
+export * from './auth';

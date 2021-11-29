@@ -11,13 +11,13 @@ const LoginPageStyled = {
     align-items: center;
   `,
   Form: styled.div`
-    width: 520px;
-    background: #FFFFFF;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    padding: 40px 30px;
-    box-sizing: border-box;
     margin-top: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    border-radius: 5px;
+    width: 520px;
+    padding: 40px 30px;
+    background: #FFFFFF;
 
     > * {
       margin-top: 20px;
@@ -27,11 +27,11 @@ const LoginPageStyled = {
     font-size: 24px;
   `,
   Alert: styled.div`
-    background-color: rgba(207, 44, 0, 0.1);
     border-radius: 5px;
+    padding: 15px 12px 10px 12px;
     display: flex;
     align-items: flex-start;
-    padding: 15px 12px 10px 12px;
+    background-color: rgba(207, 44, 0, 0.1);
     color: #CF2C00;
   `,
   Smile: styled.img`
@@ -42,8 +42,8 @@ const LoginPageStyled = {
     font-weight: 400;
   `,
   ErrorDescription: styled.p`
-    font-size: 12px;
     opacity: 0.5;
+    font-size: 12px;
   `,
   Link: styled.a`
     margin-top: 20px;

@@ -18,6 +18,7 @@
       "*@store": ["./src/store"],
       "*@styles": ["./src/styles"],
       "*@images": ["./src/images"],
+      "*@helpers": ["./src/helpers"],
     },
     "typeRoots": [
       "node_modules/@types"

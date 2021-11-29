@@ -1,40 +1,55 @@
 import { handleActions } from 'redux-actions';
 
-import authActionTypes from '../constants';
+import ActionTypes from '../constants';
 
-export const initialState = {
+interface StateAuthType {
+  loading: boolean
+  error: null| string
+  sessionKey: null | string
+  login: null | string
+  sublogin: null | string
+}
+
+const initialState: StateAuthType = {
   loading: false,
+  error: null,
   sessionKey: null,
   login: null,
   sublogin: null,
 };
 
-export default {
-  auth: handleActions(
-    {
-      [authActionTypes.AUTHENTICATE]: (state) => ({
-        ...state,
-        loading: true,
-      }),
-      [authActionTypes.AUTHENTICATE_SUCCESS]: (state, { payload }) => ({
-        ...state,
-        loading: false,
-        sessionKey: payload.sessionKey,
-        login: payload.login,
-        sublogin: payload.sublogin,
-      }),
-      [authActionTypes.AUTHENTICATE_FAILURE]: (state) => ({
-        ...state,
-        sessionKey: null,
-        login: null,
-        sublogin: null,
-      }),
-      [authActionTypes.LOGOUT]: (state) => ({
-        ...state,
-        loading: false,
-        sessionKey: null,
-      }),
-    },
-    initialState,
-  ),
-};
+const reduser = handleActions<StateAuthType>(
+  {
+    [ActionTypes.AUTHENTICATE]: (state) => ({
+      ...state,
+      loading: true,
+      error: null,
+    }),
+    [ActionTypes.AUTHENTICATE_SUCCESS]: (state, { payload }) => ({
+      ...state,
+      loading: false,
+      sessionKey: payload.sessionKey,
+      login: payload.login,
+      sublogin: payload.sublogin,
+    }),
+    [ActionTypes.AUTHENTICATE_ERROR]: (state, { payload }) => ({
+      ...state,
+      loading: false,
+      error: payload.error,
+    }),
+    [ActionTypes.AUTHENTICATE_FAILURE]: (state) => ({
+      ...state,
+      sessionKey: null,
+      login: null,
+      sublogin: null,
+    }),
+    [ActionTypes.LOGOUT]: (state) => ({
+      ...state,
+      loading: false,
+      sessionKey: null,
+    }),
+  },
+  initialState,
+);
+
+export default reduser;

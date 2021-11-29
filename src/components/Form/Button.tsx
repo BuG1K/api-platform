@@ -4,17 +4,17 @@ import loaderImage from '@images/loader.svg';
 import ButtonStyled from './ButtonStyled';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
-  loading?: true
+  loading?: boolean
   children: string
 }
 
 const Button: FunctionComponent<Props> = ({
-  type, disabled, loading, children,
+  type, disabled, loading = false, children,
 }) => (
   <ButtonStyled
     type={type}
     disabled={disabled || loading}
-    loading={loading}
+    loading={+loading}
   >
     {loading ? <img src={loaderImage} alt="loading" /> : children}
   </ButtonStyled>

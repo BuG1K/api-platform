@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface Props {
-  error?: true
+  error?: number
 }
 
 const InputStyled = {
@@ -20,14 +20,12 @@ const InputStyled = {
   `,
   Input: styled.input<Props>`
     margin-top: 5px;
+    box-sizing: border-box;
+    border: 1px solid ${({ error }) => (error ? '#CF2C00' : 'rgba(0, 0, 0, 0.2)')};
+    border-radius: 5px;
     width: 100%;
     height: 40px;
     padding: 0 10px;
-    font-size: 18px;
-    border: 1px solid ${({ error }) => (
-    error ? '#CF2C00' : 'rgba(0, 0, 0, 0.2)')};
-    box-sizing: border-box;
-    border-radius: 5px;
     font-size: 18px;
 
     &[type="password"] {

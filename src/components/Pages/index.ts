@@ -1,2 +1,3 @@
-export { default as ConsolePage } from './ConsolePage';
-export { default as LoginPage } from './LoginPage';
+import Routes from './Routes';
+
+export default Routes;

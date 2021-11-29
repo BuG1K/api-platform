@@ -1,28 +1,25 @@
-import {
-  FunctionComponent,
-  InputHTMLAttributes,
-} from 'react';
+import { InputHTMLAttributes, FunctionComponent } from 'react';
 
 import InputStyled from './InputStyled';
 
 interface Props {
   title: string
   description?: string
-  error?: true
+  error?: boolean
   inputProps: InputHTMLAttributes<HTMLInputElement>
 }
 
 const Input: FunctionComponent<Props> = ({
-  title, description, error, inputProps,
+  title, description, error = false, inputProps,
 }) => (
   <div>
     <InputStyled.Header>
-      <InputStyled.Title error={error}>{title}</InputStyled.Title>
+      <InputStyled.Title error={+error}>{title}</InputStyled.Title>
       {description && (
         <InputStyled.Description>{description}</InputStyled.Description>
       )}
     </InputStyled.Header>
-    <InputStyled.Input error={error} {...inputProps} />
+    <InputStyled.Input error={+error} {...inputProps} />
   </div>
 );
 
