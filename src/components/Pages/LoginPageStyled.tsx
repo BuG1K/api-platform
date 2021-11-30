@@ -10,7 +10,7 @@ const LoginPageStyled = {
     flex-direction: column;
     align-items: center;
   `,
-  Form: styled.div`
+  Form: styled.form`
     margin-top: 20px;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;

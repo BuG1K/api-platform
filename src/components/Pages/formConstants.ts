@@ -1,4 +1,5 @@
 const formConstants = {
+  title: '',
   error_login: 'Вход не вышел',
   input_title_login: 'Логин',
   input_title_sublogin: 'Сублогин',
