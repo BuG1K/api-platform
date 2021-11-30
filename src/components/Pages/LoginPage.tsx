@@ -20,6 +20,9 @@ interface ValuesForm {
 }
 
 const MemoizedButton = memo(Button);
+const MemoizedInput = memo(Input, (prevProps, nextProps) =>
+  prevProps.inputProps.value === nextProps.inputProps.value
+  && prevProps.error === nextProps.error);
 
 const LoginPage: FunctionComponent = () => {
   const isAuth = useSelector(selectIsAuth);
@@ -80,7 +83,7 @@ const LoginPage: FunctionComponent = () => {
           </LoginPageStyled.Alert>
         )}
 
-        <Input
+        <MemoizedInput
           title={formConstants.input_title_login}
           error={Boolean(errors.login && touched.login)}
           inputProps={{
@@ -90,7 +93,7 @@ const LoginPage: FunctionComponent = () => {
           }}
         />
 
-        <Input
+        <MemoizedInput
           title={formConstants.input_title_sublogin}
           description={formConstants.input_description_sublogin}
           error={Boolean(errors.sublogin && touched.sublogin)}
@@ -101,7 +104,7 @@ const LoginPage: FunctionComponent = () => {
           }}
         />
 
-        <Input
+        <MemoizedInput
           title={formConstants.input_title_password}
           error={Boolean(errors.password && touched.password)}
           inputProps={{
