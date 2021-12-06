@@ -8,8 +8,8 @@ import {
   actionLogout, actionAuthenticate,
 } from '@store';
 import logoImage from '@images/logo.svg';
-import mehImage from '@images/meh.svg';
 import LoginPageStyled from './LoginPageStyled';
+import { EmojiIcon } from '../Icons';
 import formConstants from './formConstants';
 import { Input, Button } from '../Form';
 
@@ -71,7 +71,9 @@ const LoginPage: FunctionComponent = () => {
 
         {error && (
           <LoginPageStyled.Alert>
-            <LoginPageStyled.Smile src={mehImage} alt="authorisation error" />
+            <LoginPageStyled.Smile>
+              <EmojiIcon />
+            </LoginPageStyled.Smile>
             <div>
               <LoginPageStyled.ErrorTitle>
                 {formConstants.error_login}

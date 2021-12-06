@@ -5,7 +5,6 @@ interface Props {
 }
 
 const ButtonStyled = styled.button<Props>`
-  border: none;
   border-radius: 5px;
   width: 110px;
   height: 40px;

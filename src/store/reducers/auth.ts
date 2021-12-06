@@ -1,8 +1,8 @@
 import { handleActions } from 'redux-actions';
 
-import ActionTypes from '../constants';
+import { AuthActionTypes } from '../constants';
 
-interface StateAuthType {
+interface State {
   loading: boolean
   error: null| string
   sessionKey: null | string
@@ -10,7 +10,7 @@ interface StateAuthType {
   sublogin: null | string
 }
 
-const initialState: StateAuthType = {
+const initialState: State = {
   loading: false,
   error: null,
   sessionKey: null,
@@ -18,32 +18,32 @@ const initialState: StateAuthType = {
   sublogin: null,
 };
 
-const reduser = handleActions<StateAuthType>(
+const reduser = handleActions(
   {
-    [ActionTypes.AUTHENTICATE]: (state) => ({
+    [AuthActionTypes.AUTHENTICATE]: (state) => ({
       ...state,
       loading: true,
       error: null,
     }),
-    [ActionTypes.AUTHENTICATE_SUCCESS]: (state, { payload }) => ({
+    [AuthActionTypes.AUTHENTICATE_SUCCESS]: (state, { payload }) => ({
       ...state,
       loading: false,
       sessionKey: payload.sessionKey,
       login: payload.login,
       sublogin: payload.sublogin,
     }),
-    [ActionTypes.AUTHENTICATE_ERROR]: (state, { payload }) => ({
+    [AuthActionTypes.AUTHENTICATE_ERROR]: (state, { payload }) => ({
       ...state,
       loading: false,
       error: payload.error,
     }),
-    [ActionTypes.AUTHENTICATE_FAILURE]: (state) => ({
+    [AuthActionTypes.AUTHENTICATE_FAILURE]: (state) => ({
       ...state,
       sessionKey: null,
       login: null,
       sublogin: null,
     }),
-    [ActionTypes.LOGOUT]: (state) => ({
+    [AuthActionTypes.LOGOUT]: (state) => ({
       ...state,
       loading: false,
       sessionKey: null,

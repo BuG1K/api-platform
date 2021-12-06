@@ -34,7 +34,7 @@ const LoginPageStyled = {
     background-color: rgba(207, 44, 0, 0.1);
     color: #CF2C00;
   `,
-  Smile: styled.img`
+  Smile: styled.div`
     margin-right: 8px;
     transform: translateY(5px);
   `,
