@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes, FunctionComponent } from 'react';
 
-import loaderImage from '@images/loader.svg';
 import ButtonStyled from './ButtonStyled';
+import { LoaderIcon } from '../Icons';
 
 interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean
@@ -9,14 +9,15 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const Button: FunctionComponent<Props> = ({
-  type, disabled, loading = false, children,
+  type = 'button', disabled, loading = false, children, ...props
 }) => (
   <ButtonStyled
     type={type}
     disabled={disabled || loading}
     loading={+loading}
+    {...props}
   >
-    {loading ? <img src={loaderImage} alt="loading" /> : children}
+    {loading ? <LoaderIcon /> : children}
   </ButtonStyled>
 );
 

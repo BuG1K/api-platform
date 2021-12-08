@@ -1,31 +1,31 @@
 import { createAction } from 'redux-actions';
 
-import ActionTypes from '../constants';
+import { AuthActionTypes } from '../constants';
 
 export const actionAuthenticate = createAction<{
   login: string
   sublogin: string
   password: string
-}>(ActionTypes.AUTHENTICATE);
+}>(AuthActionTypes.AUTHENTICATE);
 
 export const actionAuthenticateSuccess = createAction<{
   sessionKey: string
   login: string
   sublogin: string
-}>(ActionTypes.AUTHENTICATE_SUCCESS);
+}>(AuthActionTypes.AUTHENTICATE_SUCCESS);
 
 export const actionAuthenticateError = createAction<{
   error: string
-}>(ActionTypes.AUTHENTICATE_ERROR);
+}>(AuthActionTypes.AUTHENTICATE_ERROR);
 
-export const actionLogout = createAction(ActionTypes.LOGOUT);
+export const actionLogout = createAction(AuthActionTypes.LOGOUT);
 
 export const actionAuthenticateFailure = createAction(
-  ActionTypes.AUTHENTICATE_FAILURE,
+  AuthActionTypes.AUTHENTICATE_FAILURE,
 );
 
 export const actionAuthenticateCheck = createAction(
-  ActionTypes.AUTHENTICATE_CHECK,
+  AuthActionTypes.AUTHENTICATE_CHECK,
 );
 
 export type ActionsAuth =

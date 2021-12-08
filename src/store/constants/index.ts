@@ -1,3 +1,2 @@
-import authActionTypes from './auth';
-
-export default authActionTypes;
+export { default as AuthActionTypes } from './auth';
+export { default as RecordsActionTypes } from './records';

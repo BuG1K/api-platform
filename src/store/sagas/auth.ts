@@ -7,7 +7,7 @@ import {
   actionAuthenticate, actionAuthenticateError,
   actionAuthenticateSuccess, actionAuthenticateFailure,
 } from '../actions';
-import ActionTypes from '../constants';
+import { AuthActionTypes } from '../constants';
 
 export function* authenticateSaga(
   { payload }: ReturnType<typeof actionAuthenticate>,
@@ -51,9 +51,9 @@ export function* authenticateCheckSaga() {
 
 function* root() {
   yield all([
-    takeLatest(ActionTypes.AUTHENTICATE, authenticateSaga),
-    takeLatest(ActionTypes.LOGOUT, sagaLogout),
-    takeLatest(ActionTypes.AUTHENTICATE_CHECK, authenticateCheckSaga),
+    takeLatest(AuthActionTypes.AUTHENTICATE, authenticateSaga),
+    takeLatest(AuthActionTypes.LOGOUT, sagaLogout),
+    takeLatest(AuthActionTypes.AUTHENTICATE_CHECK, authenticateCheckSaga),
   ]);
 }
 
