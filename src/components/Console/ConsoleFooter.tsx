@@ -7,16 +7,16 @@ import { Button } from '../Form';
 import { AlignRightIcon } from '../Icons';
 
 interface Props {
-  onFetch: VoidFunction
+  submit: VoidFunction
   loading: boolean
   onFormat: VoidFunction
 }
 
 const ConsoleFooter: FunctionComponent<Props> = ({
-  onFetch, loading, onFormat,
+  submit, loading, onFormat,
 }) => (
   <ConsoleFooterStyled.Container>
-    <Button onClick={onFetch} loading={loading}>
+    <Button onClick={submit} loading={loading}>
       {consoleConstants.send}
     </Button>
 

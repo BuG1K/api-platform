@@ -5,7 +5,7 @@ import { RecordsActionTypes } from '../constants';
 interface Record {
   id: string
   name: string
-  body: string
+  value: string
   error: boolean
 }
 
@@ -17,7 +17,7 @@ const reduser = handleActions<StateType>(
       const record: Record = {
         id: new Date().valueOf().toString(),
         name: payload.name,
-        body: payload.body,
+        value: payload.value,
         error: payload.error,
       };
       const newState = [record, ...state];

@@ -4,7 +4,7 @@ import { RecordsActionTypes } from '../constants';
 
 export const actionAddRecord = createAction<{
   name: string
-  body: string
+  value: string
   error: boolean
 }>(RecordsActionTypes.ADD_RECORD);
 
