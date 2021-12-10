@@ -248,16 +248,28 @@ export const DotsIcon: FunctionComponent<SVGProps<SVGSVGElement>> = (
   props,
 ) => (
   <svg
-    width="12"
-    height="20"
-    viewBox="0 0 12 20"
+    width="5"
+    height="18"
+    viewBox="0 0 5 18"
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
     {...props}
   >
-    <circle cx="8" cy="3" r="2" fill="black" fillOpacity="0.2" />
-    <circle cx="8" cy="10" r="2" fill="black" fillOpacity="0.2" />
-    <circle cx="8" cy="17" r="2" fill="black" fillOpacity="0.2" />
+    <g clipPath="url(#clip0_1_460)">
+      <circle cx="2.92859" cy="2" r="2" fill="black" fillOpacity="0.2" />
+      <circle cx="2.92859" cy="9" r="2" fill="black" fillOpacity="0.2" />
+      <circle cx="2.92859" cy="16" r="2" fill="black" fillOpacity="0.2" />
+    </g>
+    <defs>
+      <clipPath id="clip0_1_460">
+        <rect
+          width="4"
+          height="18"
+          fill="white"
+          transform="translate(0.928589)"
+        />
+      </clipPath>
+    </defs>
   </svg>
 );
 

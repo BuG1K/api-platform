@@ -20,8 +20,15 @@ const reduser = handleActions<StateType>(
         value: payload.value,
         error: payload.error,
       };
-      const newState = [record, ...state];
+      let newState = [...state];
+      const isFind = newState.findIndex(({ value: itemValue }) =>
+        itemValue.replace(/\s/g, '') === record.value.replace(/\s/g, ''));
 
+      if (isFind !== -1) {
+        newState = newState.filter((_, index) => index !== isFind);
+      }
+
+      newState = [record, ...newState];
       if (newState.length > 20) newState.pop();
 
       return newState;

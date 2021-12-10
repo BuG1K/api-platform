@@ -3,9 +3,7 @@ import {
 } from 'react';
 import api from '@helpers';
 
-import {
-  actionAddRecord, useSelector, selectRecords, useDispatch,
-} from '@store';
+import { useDispatch, actionAddRecord } from '@store';
 import ConsolePageStyled from './ConsolePageStyled';
 import {
   ConsoleHeader, ConsoleRecords, ConsoleInquiry, ConsoleFooter,
@@ -22,7 +20,6 @@ const ConsolePage: FunctionComponent = () => {
   const [responsValue, setResponsValue] = useState('');
   const [responseError, setResponseError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const records = useSelector(selectRecords);
   const dispatch = useDispatch();
 
   const getBody = useCallback((value: string) => {
@@ -58,7 +55,8 @@ const ConsolePage: FunctionComponent = () => {
     api.sendsay.request(body).then((response: any) => {
       setResponsValue(getJson(response));
       resolve(response);
-    }).catch((error: string) => {
+    }).catch((error: any) => {
+      setResponsValue(getJson(error));
       setResponseError(true);
       reject(error);
     }).finally(() => setLoading(false));
@@ -74,7 +72,7 @@ const ConsolePage: FunctionComponent = () => {
     const body = getBody(value);
 
     if (body && textAreaElement) {
-      textAreaElement.value = value;
+      textAreaElement.value = getJson(body);
       onFetch(body);
     } else {
       setRequestError(true);
@@ -91,19 +89,15 @@ const ConsolePage: FunctionComponent = () => {
       if (body) {
         const record = { name: body.action, value, error: false };
 
+        textAreaElement.value = getJson(body);
         onFetch(body).catch(() => {
           record.error = true;
-        }).finally(() => {
-          const isFind = records.find(({ value: itemValue }) =>
-            itemValue.replace(/\s/g, '') === record.value.replace(/\s/g, ''));
-
-          if (!isFind) dispatch(actionAddRecord(record));
-        });
+        }).finally(() => dispatch(actionAddRecord(record)));
       } else {
         setRequestError(true);
       }
     }
-  }, [records]);
+  }, []);
 
   const onFormatRequestValue = useCallback(() => {
     const { current: textAreaElement } = refRequest;
