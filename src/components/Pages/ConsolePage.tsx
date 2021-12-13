@@ -70,10 +70,15 @@ const ConsolePage: FunctionComponent = () => {
   const onExecuteRecord = useCallback((value: string) => {
     const { current: textAreaElement } = refRequest;
     const body = getBody(value);
+    const isValidValue = body ? getJson(body) === value : false;
 
-    if (body && textAreaElement) {
+    if (body && textAreaElement && isValidValue) {
+      const record = { name: body.action, value, error: false };
+
       textAreaElement.value = getJson(body);
-      onFetch(body);
+      onFetch(body).catch(() => {
+        record.error = true;
+      }).finally(() => dispatch(actionAddRecord(record)));
     } else {
       setRequestError(true);
     }
@@ -85,8 +90,9 @@ const ConsolePage: FunctionComponent = () => {
     if (textAreaElement) {
       const { value } = textAreaElement;
       const body = getBody(value);
+      const isValidValue = body ? getJson(body) === value : false;
 
-      if (body) {
+      if (body && isValidValue) {
         const record = { name: body.action, value, error: false };
 
         textAreaElement.value = getJson(body);
