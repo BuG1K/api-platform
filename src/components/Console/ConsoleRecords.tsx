@@ -1,5 +1,5 @@
 import {
-  FunctionComponent, useState, useRef, useEffect,
+  FunctionComponent, useState, useEffect, useRef, useCallback,
 } from 'react';
 import { render } from 'react-dom';
 
@@ -10,40 +10,58 @@ import {
 import ConsoleRecordsStyled from './ConsoleRecordsStyled';
 import { DotsIcon, CloseIcon } from '../Icons';
 import consoleConstants from './consoleConstants';
+import ConsoleDropdown from './ConsoleDropdown';
 
 interface Props {
-  onFetchRecord: (body: string) => void
+  executeRecord: (value: string) => void
 }
 
-const ConsoleRecords: FunctionComponent<Props> = ({ onFetchRecord }) => {
-  const [focusRecord, setFocusRecord] = useState<null | string>(null);
-  const ref = useRef<HTMLDivElement>();
+const ConsoleRecords: FunctionComponent<Props> = ({ executeRecord }) => {
+  const [focusRecord, setFocusRecord] = useState<{
+    id: string
+    value: string
+    target: HTMLElement
+  } | null>(null);
+  const refRecords = useRef<HTMLDivElement>(null);
   const records = useSelector(selectRecords);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (focusRecord) {
+    const { current: recordsElement } = refRecords;
+
+    if (focusRecord && recordsElement) {
       const closeActions = () => setFocusRecord(null);
+      const click = ({ target }: MouseEvent) => {
+        let isRecord = false;
+
+        recordsElement.querySelectorAll('div').forEach((element) => {
+          if (target === element) {
+            isRecord = true;
+          }
+        });
+
+        if (!isRecord) closeActions();
+      };
 
       window.addEventListener('scroll', closeActions);
       window.addEventListener('resize', closeActions);
-      window.addEventListener('click', closeActions);
+      window.addEventListener('click', click);
+      recordsElement.addEventListener('scroll', closeActions);
 
       return () => {
         window.removeEventListener('scroll', closeActions);
         window.removeEventListener('resize', closeActions);
-        window.removeEventListener('click', closeActions);
+        window.removeEventListener('click', click);
+        recordsElement.removeEventListener('scroll', closeActions);
       };
     }
 
     return undefined;
   }, [focusRecord]);
 
-  const onCopy = (text: string) => {
+  const onCopy = useCallback((text: string, element: HTMLElement) => {
     navigator.clipboard.writeText(text).then(() => {
-      const { current: recordElement } = ref;
-
-      if (recordElement) {
+      if (element) {
         let alertElement = document.createElement('div');
 
         render(
@@ -56,61 +74,60 @@ const ConsoleRecords: FunctionComponent<Props> = ({ onFetchRecord }) => {
         );
         alertElement = alertElement.firstChild as HTMLDivElement;
 
-        recordElement.appendChild(alertElement);
+        element.appendChild(alertElement);
         setTimeout(() => alertElement.remove(), 1000);
       }
     });
-  };
+  }, []);
 
   return (
     <ConsoleRecordsStyled.Container>
-      <ConsoleRecordsStyled.Items>
+      <ConsoleRecordsStyled.Items ref={refRecords}>
         {records.map(({
-          id, error, name, body,
+          id, error, name, value,
         }) => (
-          <ConsoleRecordsStyled.ItemContainer
+          <ConsoleRecordsStyled.Item
             key={id}
-            ref={(element) => {
-              if (focusRecord === id && element) {
-                ref.current = element;
-              }
-            }}
+            onClick={({ target }: any) => setFocusRecord({ id, value, target })}
           >
-            <ConsoleRecordsStyled.Item onClick={() => setFocusRecord(id)}>
-              <ConsoleRecordsStyled.Сircle error={+error} />
+            <ConsoleRecordsStyled.Сircle error={+error} />
 
-              <span style={{ marginLeft: 5 }}>{name}</span>
+            <ConsoleRecordsStyled.Name>{name}</ConsoleRecordsStyled.Name>
 
-              <DotsIcon style={{ marginLeft: 11 }} />
-            </ConsoleRecordsStyled.Item>
-
-            {focusRecord === id && (
-              <ConsoleRecordsStyled.Actions>
-                <ConsoleRecordsStyled.BoxActions>
-                  <ConsoleRecordsStyled.Action
-                    onClick={() => onFetchRecord(body)}
-                  >
-                    {consoleConstants.execute}
-                  </ConsoleRecordsStyled.Action>
-
-                  <ConsoleRecordsStyled.Action
-                    onClick={() => onCopy(body)}
-                  >
-                    {consoleConstants.copy}
-                  </ConsoleRecordsStyled.Action>
-                </ConsoleRecordsStyled.BoxActions>
-
-                <ConsoleRecordsStyled.Action
-                  onClick={() => dispatch(actionDeleteRecord({ id }))}
-                  redHover
-                >
-                  {consoleConstants.delete}
-                </ConsoleRecordsStyled.Action>
-              </ConsoleRecordsStyled.Actions>
-            )}
-          </ConsoleRecordsStyled.ItemContainer>
+            <DotsIcon style={{ marginLeft: 11 }} />
+          </ConsoleRecordsStyled.Item>
         ))}
       </ConsoleRecordsStyled.Items>
+
+      <ConsoleDropdown clip={focusRecord?.target}>
+        <ConsoleRecordsStyled.Actions>
+          <ConsoleRecordsStyled.BoxActions>
+            <ConsoleRecordsStyled.Action
+              onClick={() => focusRecord && executeRecord(focusRecord.value)}
+            >
+              {consoleConstants.execute}
+            </ConsoleRecordsStyled.Action>
+
+            <ConsoleRecordsStyled.Action
+              onClick={() => focusRecord && onCopy(
+                focusRecord.value,
+                focusRecord.target,
+              )}
+            >
+              {consoleConstants.copy}
+            </ConsoleRecordsStyled.Action>
+          </ConsoleRecordsStyled.BoxActions>
+
+          <ConsoleRecordsStyled.Action
+            onClick={() => focusRecord && dispatch(actionDeleteRecord({
+              id: focusRecord.id,
+            }))}
+            redHover
+          >
+            {consoleConstants.delete}
+          </ConsoleRecordsStyled.Action>
+        </ConsoleRecordsStyled.Actions>
+      </ConsoleDropdown>
 
       <ConsoleRecordsStyled.ButtonClear
         onClick={() => dispatch(actionDeleteAllRecords())}

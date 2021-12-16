@@ -21,27 +21,28 @@ const ConsoleRecordsStyled = {
       height: 0;
     }
   `,
-  ItemContainer: styled.div`
-    position: relative;
-  `,
   Item: styled.div`
+    position: relative;
     cursor: pointer;
     margin: 0 10px;
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
-    box-sizing: border-box;
+    min-width: 80px;
     padding: 5px 10px;
     display: flex;
+    width: max-content;
     align-items: center;
     background: #FFFFFF;
+
+    * {
+      pointer-events: none;
+    }
 
     :hover {
       box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
     }
   `,
   Actions: styled.div`
-    position: fixed;
-    margin-left: 10px;
     box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.25);
     border-radius: 3px;
     padding-bottom: 5px;
@@ -98,6 +99,11 @@ const ConsoleRecordsStyled = {
     height: 8px;
     width: 8px;
     background: ${({ error }) => (error ? '#CF2C00' : '#30B800')};
+  `,
+  Name: styled.span`
+    margin-left: 8px;
+    margin-right: auto;
+    font-size: 14px;
   `,
   ButtonClear: styled.button`
     z-index: 1;

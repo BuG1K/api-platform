@@ -25,7 +25,7 @@ const InputStyled = {
     border-radius: 5px;
     width: 100%;
     height: 40px;
-    padding: 0 10px;
+    padding: 5px 10px;
     font-size: 18px;
 
     &[type="password"] {

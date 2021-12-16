@@ -1,26 +1,20 @@
-import {
-  FunctionComponent, useEffect, useState, ChangeEventHandler,
-} from 'react';
+import { useEffect, useState, forwardRef } from 'react';
 
 import ConsoleInquiryStyled from './ConsoleInquiryStyled';
 import consoleConstants from './consoleConstants';
 import { DotsIcon } from '../Icons';
 
-interface Answer {
-  value: string
-  error: boolean
-}
-
 interface Props {
-  request: Answer
-  onChangeRequestValue: ChangeEventHandler<HTMLTextAreaElement>
   loading: boolean
-  response: Answer
+  requestError: boolean
+  responseValue: string
+  responseError: boolean
+  onChangeRequestValue: VoidFunction
 }
 
-const ConsoleInquiry: FunctionComponent<Props> = ({
-  request, onChangeRequestValue, loading, response,
-}) => {
+const ConsoleInquiry = forwardRef<HTMLTextAreaElement, Props>(({
+  loading, requestError, responseValue, responseError, onChangeRequestValue,
+}, ref) => {
   const [rope, setRope] = useState(0);
   const [hooked, setHooked] = useState(false);
 
@@ -71,14 +65,14 @@ const ConsoleInquiry: FunctionComponent<Props> = ({
       style={{ gridTemplateColumns: `calc(50% - 5px - ${rope}px) 10px auto` }}
     >
       <ConsoleInquiryStyled.Side>
-        <ConsoleInquiryStyled.Title error={+request.error}>
+        <ConsoleInquiryStyled.Title error={+requestError}>
           {consoleConstants.request}
         </ConsoleInquiryStyled.Title>
         <ConsoleInquiryStyled.Textarea
-          hooked={+hooked}
-          error={+request.error}
-          value={request.value}
+          ref={ref}
           onChange={onChangeRequestValue}
+          hooked={+hooked}
+          error={+requestError}
           disabled={loading}
         />
       </ConsoleInquiryStyled.Side>
@@ -88,18 +82,18 @@ const ConsoleInquiry: FunctionComponent<Props> = ({
       </ConsoleInquiryStyled.Rope>
 
       <ConsoleInquiryStyled.Side>
-        <ConsoleInquiryStyled.Title error={+response.error}>
+        <ConsoleInquiryStyled.Title error={+responseError}>
           {consoleConstants.response}
         </ConsoleInquiryStyled.Title>
         <ConsoleInquiryStyled.Textarea
           hooked={+hooked}
-          error={+response.error}
-          value={response.value}
+          error={+responseError}
+          value={responseValue}
           onChange={(event) => event.preventDefault()}
         />
       </ConsoleInquiryStyled.Side>
     </ConsoleInquiryStyled.Container>
   );
-};
+});
 
 export default ConsoleInquiry;

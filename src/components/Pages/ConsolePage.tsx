@@ -1,95 +1,140 @@
-import { FunctionComponent, useState, ChangeEventHandler } from 'react';
+import {
+  FunctionComponent, useState, useCallback, memo, useRef,
+} from 'react';
 import api from '@helpers';
 
-import {
-  actionAddRecord, useSelector, selectRecords, useDispatch,
-} from '@store';
+import { useDispatch, actionAddRecord } from '@store';
 import ConsolePageStyled from './ConsolePageStyled';
 import {
   ConsoleHeader, ConsoleRecords, ConsoleInquiry, ConsoleFooter,
 } from '../Console';
 
+const MemoizedConsoleHeader = memo(ConsoleHeader);
+const MemoizedConsoleRecords = memo(ConsoleRecords);
+const MemoizedConsoleInquiry = memo(ConsoleInquiry);
+const MemoizedConsoleFooter = memo(ConsoleFooter);
+
 const ConsolePage: FunctionComponent = () => {
-  const [request, setRequest] = useState({ value: '', error: false });
-  const [response, setResponse] = useState({ value: '', error: false });
+  const refRequest = useRef<HTMLTextAreaElement>(null);
+  const [requestError, setRequestError] = useState(false);
+  const [responsValue, setResponsValue] = useState('');
+  const [responseError, setResponseError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const records = useSelector(selectRecords);
   const dispatch = useDispatch();
 
-  const onFetch = (requestValue: string) => {
-    let validRequest: { [key: string]: string } | null = null;
+  const getBody = useCallback((value: string) => {
+    let body: {
+      action: string
+      [key: string]: any
+    } | undefined;
 
     try {
-      validRequest = JSON.parse(requestValue);
-      if (!validRequest?.action) {
-        validRequest = null;
+      body = JSON.parse(value);
+
+      if (!body?.action) {
+        body = undefined;
         throw Error('There is no key "action"');
       }
+
+      return body;
     } catch {
-      setRequest({ ...request, error: true });
+      return body;
     }
+  }, []);
 
-    if (validRequest) {
-      const record = {
-        name: validRequest.action,
-        body: requestValue,
-        error: false,
-      };
+  const getJson = (
+    obj: { [key: string]: any },
+  ) => JSON.stringify(obj, null, 2);
 
-      setLoading(true);
+  const onFetch = useCallback((
+    body: { [key: string]: any },
+  ) => new Promise((resolve, reject) => {
+    setLoading(true);
+    setResponsValue('');
 
-      api.sendsay.request(validRequest)
-        .then((res: any) => setResponse({
-          ...response,
-          value: JSON.stringify(res, null, 2),
-        })).catch(() => {
-          setResponse({ value: '', error: true });
+    api.sendsay.request(body).then((response: any) => {
+      setResponsValue(getJson(response));
+      resolve(response);
+    }).catch((error: any) => {
+      setResponsValue(getJson(error));
+      setResponseError(true);
+      reject(error);
+    }).finally(() => setLoading(false));
+  }), []);
+
+  const onChangeRequestValue = useCallback(() => {
+    if (requestError) setRequestError(false);
+    if (responseError) setResponseError(false);
+  }, [requestError, responseError]);
+
+  const onExecuteRecord = useCallback((value: string) => {
+    const { current: textAreaElement } = refRequest;
+    const body = getBody(value);
+    const isValidValue = body ? getJson(body) === value : false;
+
+    if (body && textAreaElement && isValidValue) {
+      const record = { name: body.action, value, error: false };
+
+      textAreaElement.value = getJson(body);
+      onFetch(body).catch(() => {
+        record.error = true;
+      }).finally(() => dispatch(actionAddRecord(record)));
+    } else {
+      setRequestError(true);
+    }
+  }, []);
+
+  const onSubmit = useCallback(() => {
+    const { current: textAreaElement } = refRequest;
+
+    if (textAreaElement) {
+      const { value } = textAreaElement;
+      const body = getBody(value);
+      const isValidValue = body ? getJson(body) === value : false;
+
+      if (body && isValidValue) {
+        const record = { name: body.action, value, error: false };
+
+        textAreaElement.value = getJson(body);
+        onFetch(body).catch(() => {
           record.error = true;
-        }).finally(() => {
-          const isFind = records.find(({ body }) =>
-            body.replace(/\s/g, '') === record.body.replace(/\s/g, ''));
-
-          if (!isFind) dispatch(actionAddRecord(record));
-          setLoading(false);
-        });
+        }).finally(() => dispatch(actionAddRecord(record)));
+      } else {
+        setRequestError(true);
+      }
     }
-  };
+  }, []);
 
-  const onFetchRecord = (value: string) => {
-    setRequest({ value, error: false });
-    onFetch(value);
-  };
+  const onFormatRequestValue = useCallback(() => {
+    const { current: textAreaElement } = refRequest;
 
-  const onChangeRequestValue: ChangeEventHandler<HTMLTextAreaElement> = ({
-    target,
-  }) => {
-    setRequest({ value: target.value, error: false });
-    if (response.error) setResponse({ ...response, error: false });
-  };
+    if (textAreaElement) {
+      const { value } = textAreaElement;
+      const body = getBody(value);
 
-  const onFormat = () => {
-    try {
-      const newValue = JSON.stringify(JSON.parse(request.value), null, 2);
-
-      setRequest({ ...request, value: newValue });
-    } catch {
-      setRequest({ ...request, error: true });
+      if (body) {
+        textAreaElement.value = getJson(body);
+      } else {
+        setRequestError(true);
+      }
     }
-  };
+  }, []);
 
   return (
     <ConsolePageStyled.Container>
-      <ConsoleHeader />
-      <ConsoleRecords onFetchRecord={onFetchRecord} />
-      <ConsoleInquiry
-        request={request}
-        response={response}
+      <MemoizedConsoleHeader />
+      <MemoizedConsoleRecords executeRecord={onExecuteRecord} />
+      <MemoizedConsoleInquiry
+        ref={refRequest}
         onChangeRequestValue={onChangeRequestValue}
+        requestError={requestError}
+        responseValue={responsValue}
+        responseError={responseError}
         loading={loading}
       />
-      <ConsoleFooter
-        onFetch={() => onFetch(request.value)}
-        onFormat={onFormat}
+      <MemoizedConsoleFooter
+        submit={onSubmit}
+        onFormat={onFormatRequestValue}
         loading={loading}
       />
     </ConsolePageStyled.Container>

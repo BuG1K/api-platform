@@ -1,4 +1,6 @@
-import { FunctionComponent, useState, useEffect } from 'react';
+import {
+  FunctionComponent, useState, useEffect, useCallback,
+} from 'react';
 import fscreen from 'fscreen';
 
 import {
@@ -34,8 +36,13 @@ const ConsoleHeader: FunctionComponent = () => {
     return undefined;
   });
 
-  const toggleFullscreen = () => (fullScreen
-    ? fscreen.exitFullscreen() : fscreen.requestFullscreen(document.documentElement));
+  const toggleFullscreen = useCallback(() => {
+    if (fullScreen) {
+      fscreen.exitFullscreen();
+    } else {
+      fscreen.requestFullscreen(document.documentElement);
+    }
+  }, [fullScreen]);
 
   return (
     <ConsoleHeaderStyled.Container>

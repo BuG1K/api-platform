@@ -55,10 +55,6 @@ const LoginPage: FunctionComponent = () => {
   });
 
   useEffect(() => {
-    if (isAuth) dispatch(actionLogout());
-  }, []);
-
-  useEffect(() => {
     if (isAuth) history.push('/');
   }, [isAuth]);
 
